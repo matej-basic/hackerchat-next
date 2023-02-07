@@ -36,8 +36,8 @@ const UserList = props => {
             return (
                 <div>
                     {(userThatWantsToChat == user) ?
-                        (<div className='userlist-row' value={user} onClick={(e) => HandleChatProposal(e)}>{user}+</div>) :
-                        (<div className='userlist-row' value={user} onClick={(e) => submitHandler(e)}>{user}</div>)}
+                        (<div className='userlist-row' key={user} value={user} onClick={(e) => HandleChatProposal(e)}>{user}+</div>) :
+                        (<div className='userlist-row' key={user} value={user} onClick={(e) => submitHandler(e)}>{user}</div>)}
                 </div>
             )
         })
