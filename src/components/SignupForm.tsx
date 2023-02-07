@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
-const SignupForm = props => {
+const SignupForm = (props: { onChange: (arg0: any) => void; }) => {
     const [details, setDetails] = useState({ username: "", password: "" })
 
-    const SignUp = async (details) => {
+    const SignUp = async (details: { username: any; password?: string; }) => {
         const signupResponse = await fetch('/api/auth/signup', {
             method: "POST",
             headers: {
@@ -17,6 +17,7 @@ const SignupForm = props => {
         props.onChange(username)
     }
 
+    // @ts-ignore
     const submitHandler = e => {
         e.preventDefault();
         SignUp(details);

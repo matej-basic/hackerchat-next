@@ -1,3 +1,5 @@
+
+// @ts-ignore
 async function ImportCryptoKey(publicKey) {
     const importedKey = await window.crypto.subtle.importKey("jwk", publicKey, {
         name: "ECDH",

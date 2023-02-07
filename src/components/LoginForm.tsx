@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const LoginForm = props => {
+const LoginForm = (props: { onChange: (arg0: any) => void; }) => {
 
     const [details, setDetails] = useState({ username: "", password: "" });
 
-    const LogIn = async (details) => {
+    const LogIn = async (details: { username: any; password?: string; }) => {
         const loginResponse = await fetch('/api/auth/signin', {
             method: "POST",
             headers: {
@@ -18,7 +18,7 @@ const LoginForm = props => {
         const { username } = details;
         props.onChange(username)
     }
-    const submitHandler = e => {
+    const submitHandler = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         LogIn(details);
     }

@@ -5,6 +5,7 @@ async function GetUserList() {
     var userArray;
     var usersString;
     var arrayOfUsers;
+    // @ts-ignore
     var returnValue = []
 
     if (socket != null) {
@@ -21,6 +22,7 @@ async function GetUserList() {
                     usersString = userArray.toString()
                     arrayOfUsers = usersString.split(",")
                     Object.values(arrayOfUsers).map(user => {
+                        // @ts-ignore
                         var jsonUser = JSON.parse(user)
                         returnValue.push(jsonUser.username)
                     })
@@ -29,6 +31,7 @@ async function GetUserList() {
         }
     }
 
+    // @ts-ignore
     return returnValue
 }
 

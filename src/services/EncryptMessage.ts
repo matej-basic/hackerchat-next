@@ -1,8 +1,11 @@
+
+// @ts-ignore
 function EncodeMessage(message) {
     var enc = new TextEncoder();
     return enc.encode(message);
 }
 
+// @ts-ignore
 async function EncryptMessage(message, derivedKey) {
     var encodedMessage = EncodeMessage(message);
     const iv = window.crypto.getRandomValues(new Uint8Array(12));

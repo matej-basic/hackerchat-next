@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import GetWebSocket from '../services/GetWebSocket';
 import DecryptMessage from '../services/DecryptMessage';
 
-const ChatBox = props => {
+const ChatBox = (props: { socket: React.SetStateAction<null>; user: string; onUserListChange: (arg0: any[]) => void; onUserChatProposal: (arg0: any, arg1: any) => void; onUserChatAccept: (arg0: any, arg1: any) => void; onChatEnd: () => void; derivedKey: any; }) => {
     const [messages, setMessages] = useState([]);
     const [websocket, setWebSocket] = useState(null);
     const messageRef = useRef(null);
@@ -11,7 +11,7 @@ const ChatBox = props => {
     var userArray;
     var usersString;
     var arrayOfUsers;
-    var returnValue = []
+    var returnValue: any[] = []
 
     useEffect(() => {
         // eslint-disable-next-line
@@ -19,7 +19,7 @@ const ChatBox = props => {
         // eslint-disable-next-line
     }, []);
 
-    const str2ab = (str) => {
+    const str2ab = (str: string) => {
         var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
         var bufView = new Uint8Array(buf);
         for (var i = 0, strLen = str.length; i < strLen; i++) {
@@ -30,7 +30,8 @@ const ChatBox = props => {
 
     useEffect(() => {
         if (messageRef) {
-            messageRef.current.addEventListener('DOMNodeInserted', event => {
+            // @ts-ignore: Object is possibly 'null'.
+            messageRef.current.addEventListener('DOMNodeInserted', (event: { currentTarget: any; }) => {
                 const { currentTarget: target } = event;
                 target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
             })
@@ -38,11 +39,14 @@ const ChatBox = props => {
     }, []);
 
     if (websocket) {
-        websocket.onopen = function (ev) {
+        // @ts-ignore
+        websocket.onopen = function (ev: any) {
+            // @ts-ignore
             websocket.send("USERNAME: " + props.user)
             //websocket.send("GET USERLIST")
         }
-        websocket.onmessage = async function (ev) {
+        // @ts-ignore
+        websocket.onmessage = async function (ev: { data: string | null; }) {
             if (ev.data != null) {
                 if ((/^USERS---/.test(ev.data.toString()))) {
                     userArray = ev.data.toString().split('---')
@@ -74,6 +78,7 @@ const ChatBox = props => {
                 else {
                     const newMessage = JSON.parse(ev.data)
                     const decryptedMessage = await DecryptMessage(newMessage.messageText, newMessage.messageIV, props.derivedKey)
+                    // @ts-ignore
                     setMessages((vals) => {
                         return [
                             ...vals, { messageAuthor: newMessage.messageAuthor, messageText: decryptedMessage, messageId: newMessage.messageId }
@@ -86,8 +91,11 @@ const ChatBox = props => {
 
     if (messages.length > 0) {
         renderedMessages = Object.values(messages).map(message => {
+            // @ts-ignore
             return (message.messageAuthor === props.user) ? (
+                // @ts-ignore
                 <div className='message-row-mine'><div className='message-mine' key={message.messageId}>{message.messageText}</div></div>) : (
+                // @ts-ignore
                 <div className='message-row'><div className='message' key={message.messageId}><div className='message-author'>{message.messageAuthor}</div>{message.messageText}</div></div>)
         });
     }

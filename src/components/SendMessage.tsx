@@ -3,6 +3,7 @@ import RandomID from '../services/RandomID';
 import EncryptMessage from '../services/EncryptMessage';
 import DecryptMessage from '../services/DecryptMessage';
 
+// @ts-ignore
 const SendMessage = props => {
     const [messageText, setMessageText] = useState("");
     const [websocket, setWebSocket] = useState(null);
@@ -15,10 +16,13 @@ const SendMessage = props => {
 
     InitWebSocket();
 
+    // @ts-ignore
     const ab2str = (bufer) => {
+        // @ts-ignore
         return String.fromCharCode.apply(null, new Uint8Array(bufer));
     }
 
+    // @ts-ignore
     const str2ab = (str) => {
         var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
         var bufView = new Uint8Array(buf);
@@ -28,11 +32,13 @@ const SendMessage = props => {
         return buf;
     }
 
+    // @ts-ignore
     const MessageHandler = async (e) => {
         e.preventDefault();
         if (messageText.length > 0) {
             const { cipherText, iv } = await EncryptMessage(messageText, props.derivedKey)
             const messageObject = { messageAuthor: props.user, messageText: ab2str(cipherText), messageID: RandomID(), messageIV: ab2str(iv) }
+            // @ts-ignore
             websocket.send(JSON.stringify(messageObject, null, 0));
             setMessageText("");
         }

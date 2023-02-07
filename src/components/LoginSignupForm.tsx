@@ -3,11 +3,11 @@ import { useState } from 'react';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 
-const LoginSignupForm = props => {
+const LoginSignupForm = (props: { onChange: (arg0: any) => void; }) => {
 
     const [toggleState, setToggleState] = useState(1);
 
-    const toggleTab = (index) => {
+    const toggleTab = (index: React.SetStateAction<number>) => {
         setToggleState(index);
     }
 
@@ -17,7 +17,7 @@ const LoginSignupForm = props => {
                 <div className='login-tab' onClick={() => toggleTab(1)}>SIGN IN</div>
                 <div className='register-tab' onClick={() => toggleTab(2)}>SIGN UP</div>
             </div>
-            {toggleState === 1 ? (<LoginForm onChange={value => props.onChange(value)} />) : (<SignupForm onChange={value => props.onChange(value)} />)}
+            {toggleState === 1 ? (<LoginForm onChange={value => props.onChange(value)} />) : (<SignupForm onChange={(value: any) => props.onChange(value)} />)}
         </div>
     )
 }

@@ -7,7 +7,7 @@ import ExportCryptoKey from '../services/ExportKey';
 import DeriveCryptoKey from '../services/DeriveKey';
 import ImportCryptoKey from '../services/ImportKey';
 
-const ChatView = props => {
+const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: React.SetStateAction<null>; socket: unknown; user: string; }) => {
     const [websocket, setWebSocket] = useState(null);
     const [userList, setUserList] = useState([]);
     const [userChat, setUserChat] = useState("");
@@ -28,22 +28,25 @@ const ChatView = props => {
     }, [])
 
     useEffect(() => {
+        // @ts-ignore
         setWebSocket(props.socket)
     }, [props.socket])
 
     useEffect(() => {
         const fetchExportedKey = async () => {
+            // @ts-ignore
             setExportedPrivateKey(await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.publicKey))
         }
 
         fetchExportedKey().catch(err => { console.log("Error exporting private key") })
     }, [])
 
-    const ProposeChat = async (value) => {
+    const ProposeChat = async (value: string) => {
+        // @ts-ignore
         websocket.send("NEWCHAT;" + props.user + "---" + value + "---" + JSON.stringify(await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.publicKey)));
     }
 
-    const HandleChatProposal = async (value, exportedKey) => {
+    const HandleChatProposal = async (value: React.SetStateAction<string>, exportedKey: string) => {
         setUserThatWantsToChat(value);
         //const senderPublicKey = await ImportCryptoKey(JSON.parse(exportedKey))
         const senderPublicNotImported = JSON.parse(exportedKey)
@@ -51,16 +54,22 @@ const ChatView = props => {
         setImportedKey(senderPublicKey)
     }
 
-    const HandleChatAccept = async (value, pubKey) => {
+    const HandleChatAccept = async (value: React.SetStateAction<string>, pubKey: string | null) => {
         if (pubKey != null) {
             const returnedImportedKey = await ImportCryptoKey(JSON.parse(pubKey))
+            // @ts-ignore
             setImportedKey(returnedImportedKey)
+            // @ts-ignore
             const returnedDerivedKey = await DeriveCryptoKey(JSON.parse(pubKey), await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.privateKey))
+            // @ts-ignore
             setDerivedKey(returnedDerivedKey)
             setUserChat(value)
         } else {
+            // @ts-ignore
             websocket.send("CHATACCEPT;" + props.user + "---" + value + "---" + JSON.stringify(await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.publicKey)))
+            // @ts-ignore
             const returnedDerivedKey = await DeriveCryptoKey(importedKey, await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.privateKey))
+            // @ts-ignore
             setDerivedKey(returnedDerivedKey)
             setUserChat(value)
         }
@@ -69,6 +78,7 @@ const ChatView = props => {
     const HandleChatClose = () => {
         setUserChat("")
         setUserThatWantsToChat("")
+        // @ts-ignore
         websocket.send("CHATEND;" + props.user)
     }
 
@@ -77,12 +87,18 @@ const ChatView = props => {
             <div>
                 {(userChat == "") ? (
                     <>
-                        <UserList onChatEnd={value => { setUserChat("") }} onAcceptChat={value => { HandleChatAccept(value, null) }} onClickUser={value => { ProposeChat(value); }} user={props.user} users={userList} userThatWantsToChat={userThatWantsToChat} />
+                        {/* 
+                    // @ts-ignore */}
+                        <UserList onChatEnd={(value: any) => { setUserChat("") }} onAcceptChat={(value: React.SetStateAction<string>) => { HandleChatAccept(value, null) }} onClickUser={(value: string) => { ProposeChat(value); }} user={props.user} users={userList} userThatWantsToChat={userThatWantsToChat} />
+                        {/* 
+                        // @ts-ignore */}
                         <ChatBox socket={websocket} user={props.user} onUserListChange={value => setUserList(value)} onUserChatProposal={(value, exportedKey) => { HandleChatProposal(value, exportedKey) }} onUserChatAccept={(value, pubKey) => HandleChatAccept(value, pubKey)} />
                     </>
                 ) : (
                     <>
-                        <ChatBox onChatEnd={value => { HandleChatClose() }} socket={websocket} user={props.user} onUserListChange={value => setUserList(value)} derivedKey={derivedKey} />
+                        {/* 
+                        // @ts-ignore */}
+                        <ChatBox onChatEnd={(value: any) => { HandleChatClose() }} socket={websocket} user={props.user} onUserListChange={value => setUserList(value)} derivedKey={derivedKey} />
                         <SendMessage onCloseClick={() => { HandleChatClose() }} socket={websocket} user={props.user} derivedKey={derivedKey} />
                     </>
                 )}

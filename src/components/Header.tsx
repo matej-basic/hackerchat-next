@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Header = props => {
+const Header = (props: { onChange: (arg0: null) => void; user: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => {
     const submitHandler = async () => {
         const signoutResponse = await fetch('/api/auth/signout', {
             method: "POST",

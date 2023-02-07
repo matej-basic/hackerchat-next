@@ -1,8 +1,11 @@
+
+// @ts-ignore
 function DecodeMessage(message) {
     var dec = new TextDecoder();
     return dec.decode(message)
 }
 
+// @ts-ignore
 const str2ab = (str) => {
     var buf = new ArrayBuffer(str.length);
     var bufView = new Uint8Array(buf);
@@ -12,6 +15,7 @@ const str2ab = (str) => {
     return buf;
 }
 
+// @ts-ignore
 async function DecryptMessage(cipherText, iv, derivedKey) {
     //const exportedDerivedKey = await window.crypto.subtle.exportKey("jwk", derivedKey)
     //console.log(JSON.stringify(exportedDerivedKey, null, 4))

@@ -12,6 +12,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         return
     }
 
+    // @ts-ignore
     const username = jwt.verify(token, process.env.JWT_KEY)
     await dbConnect()
     const user = await User.findOne(username)

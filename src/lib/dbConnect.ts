@@ -4,14 +4,16 @@ const { MONGODB_CONNECT } = process.env;
 
 if (!MONGODB_CONNECT) throw new Error('MONGODB_CONNECT not defined');
 
+// @ts-ignore
 let cached = global.mongoose;
 
+// @ts-ignore
 if (!cached) { cached = global.mongoose = { conn: null, promise: null } }
 
 async function dbConnect() {
     if (cached.conn) return cached.conn;
 
-    if (!cached.promise) { cached.promise = mongoose.connect(MONGODB_CONNECT).then(mongoose => mongoose) }
+    if (!cached.promise) { cached.promise = mongoose.connect(MONGODB_CONNECT!).then(mongoose => mongoose) }
 
     cached.conn = await cached.promise;
     return cached.conn;

@@ -30,6 +30,7 @@ export default function Home() {
   useEffect(() => {
     const GetKeyPair = async () => {
       const pairOfKeys = await GenerateKey()
+      // @ts-ignore
       setKeyPair(pairOfKeys)
     }
 
@@ -42,6 +43,8 @@ export default function Home() {
   return (
     <div className="App">
       <HackerchatBanner />
+      {/* 
+                        // @ts-ignore */}
       {(user != null) ? (<><Header user={user} onChange={value => { websocket.close(); setWebSocket(null); setUser(value) }} /><ChatView onGetSocket={value => setWebSocket(value)} socket={websocket} user={user} rsaKey={keyPair} /></>) : (<LoginSignupForm onChange={value => setUser(value)} />)}
     </div>
   )

@@ -1,3 +1,5 @@
+
+// @ts-ignore
 async function DeriveCryptoKey(publicKey, privateKey) {
     const impPub = await window.crypto.subtle.importKey("jwk", publicKey, {
         name: "ECDH",
