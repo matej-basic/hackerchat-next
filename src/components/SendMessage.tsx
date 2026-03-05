@@ -1,7 +1,26 @@
+/**
+ * WSTG-CLNT-10: Testing WebSockets
+ * Reference: https://github.com/OWASP/wstg/blob/master/document/4-Web_Application_Security_Testing/11-Client-side_Testing/10-Testing_WebSockets.md
+ *
+ * WSTG-CLNT-01: Testing for DOM-Based Cross Site Scripting
+ * Reference: https://github.com/OWASP/wstg/blob/master/document/4-Web_Application_Security_Testing/11-Client-side_Testing/01-Testing_for_DOM-based_Cross_Site_Scripting.md
+ *
+ * WSTG-BUSL-01: Test Business Logic Data Validation
+ * Reference: https://github.com/OWASP/wstg/blob/master/document/4-Web_Application_Security_Testing/10-Business_Logic_Testing/01-Test_Business_Logic_Data_Validation.md
+ *
+ * Security notes:
+ * - Message text is validated for length before sending
+ * - WebSocket messages are encrypted with E2E encryption (AES-GCM)
+ * - No user-controlled content is rendered unsafely (React auto-escapes JSX)
+ */
+
 import React, { useState, useEffect } from 'react';
 import RandomID from '../services/RandomID';
 import EncryptMessage from '../services/EncryptMessage';
 import DecryptMessage from '../services/DecryptMessage';
+
+// WSTG-BUSL-01: Maximum message length to prevent abuse
+const MAX_MESSAGE_LENGTH = 5000;
 
 // @ts-ignore
 const SendMessage = props => {
@@ -35,7 +54,8 @@ const SendMessage = props => {
     // @ts-ignore
     const MessageHandler = async (e) => {
         e.preventDefault();
-        if (messageText.length > 0) {
+        // WSTG-BUSL-01: Validate message content before sending
+        if (messageText.length > 0 && messageText.length <= MAX_MESSAGE_LENGTH) {
             const { cipherText, iv } = await EncryptMessage(messageText, props.derivedKey)
             const messageObject = { messageAuthor: props.user, messageText: ab2str(cipherText), messageID: RandomID(), messageIV: ab2str(iv) }
             // @ts-ignore
@@ -51,7 +71,16 @@ const SendMessage = props => {
     return (
         <div>
             <form className='message-form' onSubmit={MessageHandler} autoComplete="off">
-                <input type="text" name="message" placeholder="Your message..." className="send-message" onChange={e => setMessageText(e.target.value)} value={messageText}></input>
+                {/* WSTG-CLNT-01: Input field uses controlled React state — safe from DOM XSS */}
+                <input
+                    type="text"
+                    name="message"
+                    placeholder="Your message..."
+                    className="send-message"
+                    onChange={e => setMessageText(e.target.value)}
+                    value={messageText}
+                    maxLength={MAX_MESSAGE_LENGTH}
+                ></input>
             </form>
             <div onClick={e => { HandleClick() }} className='finish-chat'>CLOSE CHAT</div>
         </div>
