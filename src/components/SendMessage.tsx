@@ -27,13 +27,9 @@ const SendMessage = props => {
     const [messageText, setMessageText] = useState("");
     const [websocket, setWebSocket] = useState(null);
 
-    const InitWebSocket = () => {
-        useEffect(() => {
-            setWebSocket(props.socket);
-        }, [])
-    };
-
-    InitWebSocket();
+    useEffect(() => {
+        setWebSocket(props.socket);
+    }, [])
 
     // @ts-ignore
     const ab2str = (bufer) => {

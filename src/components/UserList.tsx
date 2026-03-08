@@ -74,10 +74,10 @@ const UserList = (props: { users: unknown; user: unknown; userThatWantsToChat: u
     if (renderedUsers.length > 0) {
         useri = Object.values(renderedUsers).map(user => {
             return (
-                <div key={user}>
+                <div key={user as React.Key}>
                     {(userThatWantsToChat == user) ?
-                        (<div className='userlist-row' key={user} onClick={(e) => HandleChatProposal(e)}>{user}+</div>) :
-                        (<div className='userlist-row' key={user} onClick={(e) => submitHandler(e)}>{user}</div>)}
+                        (<div className='userlist-row' key={user as React.Key} onClick={() => props.onAcceptChat(user)}>{user as React.ReactNode}+</div>) :
+                        (<div className='userlist-row' key={user as React.Key} onClick={() => props.onClickUser(user)}>{user as React.ReactNode}</div>)}
                 </div>
             )
         })

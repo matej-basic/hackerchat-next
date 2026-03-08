@@ -20,12 +20,16 @@ const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: React
     var senderPublicKey;
 
     useEffect(() => {
-        props.onGetSocket(GetWebSocket())
+        const ws = GetWebSocket()
+        props.onGetSocket(ws)
+        return () => {
+            ws.close()
+        }
     }, [])
 
     useEffect(() => {
         setMyRsaKeyPair(props.rsaKey)
-    }, [])
+    }, [props.rsaKey])
 
     useEffect(() => {
         // @ts-ignore
@@ -35,43 +39,74 @@ const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: React
     useEffect(() => {
         const fetchExportedKey = async () => {
             // @ts-ignore
-            setExportedPrivateKey(await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.publicKey))
+            if (!myRsaKeyPair || !myRsaKeyPair.publicKey) return;
+            // @ts-ignore
+            setExportedPrivateKey(await ExportCryptoKey(myRsaKeyPair))
         }
 
-        fetchExportedKey().catch(err => { console.log("Error exporting private key") })
-    }, [])
+        fetchExportedKey().catch(err => { console.log("Error exporting private key: ", err) })
+    }, [myRsaKeyPair])
 
     const ProposeChat = async (value: string) => {
         // @ts-ignore
-        websocket.send("NEWCHAT;" + props.user + "---" + value + "---" + JSON.stringify(await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.publicKey)));
+        if (!myRsaKeyPair || !myRsaKeyPair.publicKey) {
+            console.error("myRsaKeyPair is missing or has no publicKey");
+            return;
+        }
+        try {
+            // @ts-ignore
+            const exportedPubKey = await ExportCryptoKey(myRsaKeyPair);
+            // @ts-ignore
+            websocket.send("NEWCHAT;" + props.user + "---" + value + "---" + JSON.stringify(exportedPubKey));
+        } catch (err) {
+            console.error("ProposeChat export error:", err);
+        }
     }
 
     const HandleChatProposal = async (value: React.SetStateAction<string>, exportedKey: string) => {
         setUserThatWantsToChat(value);
-        //const senderPublicKey = await ImportCryptoKey(JSON.parse(exportedKey))
-        const senderPublicNotImported = JSON.parse(exportedKey)
-        senderPublicKey = JSON.parse(exportedKey)
-        setImportedKey(senderPublicKey)
+        try {
+            const senderPublicKey = await ImportCryptoKey(JSON.parse(exportedKey))
+            // @ts-ignore
+            setImportedKey(senderPublicKey)
+        } catch (err) {
+            console.error("Error importing proposed key:", err);
+        }
     }
 
     const HandleChatAccept = async (value: React.SetStateAction<string>, pubKey: string | null) => {
+        // @ts-ignore
+        if (!myRsaKeyPair || !myRsaKeyPair.privateKey || !myRsaKeyPair.publicKey) {
+            console.error("myRsaKeyPair is missing keys during HandleChatAccept");
+            return;
+        }
         if (pubKey != null) {
-            const returnedImportedKey = await ImportCryptoKey(JSON.parse(pubKey))
-            // @ts-ignore
-            setImportedKey(returnedImportedKey)
-            // @ts-ignore
-            const returnedDerivedKey = await DeriveCryptoKey(JSON.parse(pubKey), await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.privateKey))
-            // @ts-ignore
-            setDerivedKey(returnedDerivedKey)
-            setUserChat(value)
+            try {
+                const returnedImportedKey = await ImportCryptoKey(JSON.parse(pubKey))
+                // @ts-ignore
+                setImportedKey(returnedImportedKey)
+                // @ts-ignore
+                const returnedDerivedKey = await DeriveCryptoKey(returnedImportedKey, myRsaKeyPair.privateKey)
+                // @ts-ignore
+                setDerivedKey(returnedDerivedKey)
+                setUserChat(value)
+            } catch (err) {
+                console.error("Error during HandleChatAccept derived key setup:", err);
+            }
         } else {
-            // @ts-ignore
-            websocket.send("CHATACCEPT;" + props.user + "---" + value + "---" + JSON.stringify(await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.publicKey)))
-            // @ts-ignore
-            const returnedDerivedKey = await DeriveCryptoKey(importedKey, await window.crypto.subtle.exportKey("jwk", myRsaKeyPair.privateKey))
-            // @ts-ignore
-            setDerivedKey(returnedDerivedKey)
-            setUserChat(value)
+            try {
+                // @ts-ignore
+                const exportedPubKey = await ExportCryptoKey(myRsaKeyPair);
+                // @ts-ignore
+                websocket.send("CHATACCEPT;" + props.user + "---" + value + "---" + JSON.stringify(exportedPubKey))
+                // @ts-ignore
+                const returnedDerivedKey = await DeriveCryptoKey(importedKey, myRsaKeyPair.privateKey)
+                // @ts-ignore
+                setDerivedKey(returnedDerivedKey)
+                setUserChat(value)
+            } catch (err) {
+                console.error("HandleChatAccept export error:", err);
+            }
         }
     }
 

@@ -14,18 +14,16 @@ export default function Home() {
   const [keyPair, setKeyPair] = useState(null);
   const [websocket, setWebSocket] = useState(null)
 
-  const GetCurrentUser = async () => {
-    useEffect(() => {
-      const currentUserURL = process.env.NEXT_PUBLIC_AUTH_CONNECT + "/api/auth/currentuser"
-      axios.post(currentUserURL, { username: "", password: "" })
-        .then(res => {
-          const { username } = res.data
-          setUser(username);
-        }).catch(err => {
-          console.log(err);
-        })
-    }, []);
-  }
+  useEffect(() => {
+    const currentUserURL = "/api/auth/currentuser"
+    axios.post(currentUserURL, { username: "", password: "" })
+      .then(res => {
+        const { username } = res.data
+        setUser(username);
+      }).catch(err => {
+        console.log(err);
+      })
+  }, []);
 
   useEffect(() => {
     const GetKeyPair = async () => {
@@ -36,16 +34,14 @@ export default function Home() {
 
     GetKeyPair()
       .catch(err => { console.log("Error generating key: " + err) })
-  })
-
-  GetCurrentUser();
+  }, [])
 
   return (
     <div className="App">
       <HackerchatBanner />
       {/* 
                         // @ts-ignore */}
-      {(user != null) ? (<><Header user={user} onChange={value => { websocket.close(); setWebSocket(null); setUser(value) }} /><ChatView onGetSocket={value => setWebSocket(value)} socket={websocket} user={user} rsaKey={keyPair} /></>) : (<LoginSignupForm onChange={value => setUser(value)} />)}
+      {(user != null) ? (<><Header user={user} onChange={value => { websocket?.close(); setWebSocket(null); setUser(value) }} /><ChatView onGetSocket={value => setWebSocket(value)} socket={websocket} user={user} rsaKey={keyPair} /></>) : (<LoginSignupForm onChange={value => setUser(value)} />)}
     </div>
   )
 }

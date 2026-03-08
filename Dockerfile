@@ -16,6 +16,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build Next.js application
+ARG NEXT_PUBLIC_AUTH_CONNECT
+ENV NEXT_PUBLIC_AUTH_CONNECT=$NEXT_PUBLIC_AUTH_CONNECT
+
+ARG NEXT_PUBLIC_WEBSOCKET_CONNECT
+ENV NEXT_PUBLIC_WEBSOCKET_CONNECT=$NEXT_PUBLIC_WEBSOCKET_CONNECT
+
 RUN npm run build
 
 # Production image, copy all the files and run next

@@ -82,9 +82,19 @@ const ChatBox = (props: { socket: React.SetStateAction<null>; user: string; onUs
 
     if (websocket) {
         // @ts-ignore
+        if (websocket.readyState === 1 && !websocket._usernameSent) {
+            // @ts-ignore
+            websocket.send("USERNAME: " + props.user)
+            // @ts-ignore
+            websocket._usernameSent = true;
+        }
+
+        // @ts-ignore
         websocket.onopen = function (ev: any) {
             // @ts-ignore
             websocket.send("USERNAME: " + props.user)
+            // @ts-ignore
+            websocket._usernameSent = true;
         }
         // @ts-ignore
         websocket.onmessage = async function (ev: { data: string | null; }) {

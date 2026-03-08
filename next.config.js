@@ -65,8 +65,6 @@ const nextConfig = {
             key: 'Cross-Origin-Opener-Policy',
             value: 'same-origin',
           },
-          // WSTG-CLNT-06: Cross-Origin-Resource-Policy — prevent cross-origin resource loading
-          // Reference: https://github.com/OWASP/wstg/blob/master/document/4-Web_Application_Security_Testing/11-Client-side_Testing/06-Testing_for_Client-side_Resource_Manipulation.md
           {
             key: 'Cross-Origin-Resource-Policy',
             value: 'same-origin',
@@ -75,6 +73,16 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: '/ws-api/:path*',
+        destination: process.env.NODE_ENV === 'development'
+          ? 'http://localhost:8080/:path*'
+          : 'http://websocket:8080/:path*',
+      },
+    ]
+  }
 };
 
 module.exports = nextConfig;
