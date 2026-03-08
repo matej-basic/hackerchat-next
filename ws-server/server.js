@@ -105,9 +105,9 @@ wss.on('connection', (ws) => {
         try {
             const parsed = JSON.parse(message);
             if (parsed.messageAuthor && parsed.messageText) {
-                // Broadcast to all other connected clients
+                // Broadcast to all connected clients (including sender so they see their own message)
                 clients.forEach((info, client) => {
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    if (client.readyState === WebSocket.OPEN) {
                         client.send(message);
                     }
                 });
