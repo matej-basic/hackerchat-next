@@ -134,7 +134,7 @@ const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: React
                         {/* 
                         // @ts-ignore */}
                         <ChatBox onChatEnd={(value: any) => { HandleChatClose() }} socket={websocket} user={props.user} onUserListChange={value => setUserList(value)} derivedKey={derivedKey} />
-                        <SendMessage onCloseClick={() => { HandleChatClose() }} socket={websocket} user={props.user} derivedKey={derivedKey} />
+                        <SendMessage onCloseClick={() => { HandleChatClose() }} socket={websocket} user={props.user} recipient={userChat} derivedKey={derivedKey} />
                     </>
                 )}
             </div>

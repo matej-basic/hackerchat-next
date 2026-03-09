@@ -53,7 +53,7 @@ const SendMessage = props => {
         // WSTG-BUSL-01: Validate message content before sending
         if (messageText.length > 0 && messageText.length <= MAX_MESSAGE_LENGTH) {
             const { cipherText, iv } = await EncryptMessage(messageText, props.derivedKey)
-            const messageObject = { messageAuthor: props.user, messageText: ab2str(cipherText), messageID: RandomID(), messageIV: ab2str(iv) }
+            const messageObject = { messageAuthor: props.user, recipient: props.recipient, messageText: ab2str(cipherText), messageID: RandomID(), messageIV: ab2str(iv) }
             // @ts-ignore
             websocket.send(JSON.stringify(messageObject, null, 0));
             setMessageText("");
