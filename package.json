@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": ">=24"
+  },
   "dependencies": {
     "@next/font": "13.1.6",
     "@types/jsonwebtoken": "^9.0.1",
