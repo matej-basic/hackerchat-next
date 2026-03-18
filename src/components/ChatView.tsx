@@ -7,7 +7,7 @@ import ExportCryptoKey from '../services/ExportKey';
 import DeriveCryptoKey from '../services/DeriveKey';
 import ImportCryptoKey from '../services/ImportKey';
 
-const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: React.SetStateAction<null>; socket: unknown; user: string; }) => {
+const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: CryptoKeyPair | null; socket: unknown; user: string; }) => {
     const [websocket, setWebSocket] = useState(null);
     const [userList, setUserList] = useState([]);
     const [userChat, setUserChat] = useState("");
