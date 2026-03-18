@@ -82,8 +82,11 @@ const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: React
         websocket.send("CHATEND;" + props.user)
     }
 
-    if (websocket != null) {
-        return (
+    if (websocket == null) {
+        return null;
+    }
+
+    return (
             <div>
                 {(userChat == "") ? (
                     <>
@@ -103,8 +106,7 @@ const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: React
                     </>
                 )}
             </div>
-        )
-    }
+    )
 }
 
 export default ChatView
