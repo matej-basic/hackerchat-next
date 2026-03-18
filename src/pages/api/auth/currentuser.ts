@@ -12,10 +12,20 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         return
     }
 
-    // @ts-ignore
-    const username = jwt.verify(token, process.env.JWT_KEY)
-    await dbConnect()
-    const user = await User.findOne(username)
+    let payload: { id: string; username: string };
+    try {
+        payload = jwt.verify(token, process.env.JWT_KEY!) as typeof payload;
+    } catch {
+        res.status(200).send({ username: null });
+        return;
+    }
 
-    res.status(200).send({ username: user["username"] });
+    await dbConnect()
+    const user = await User.findOne({ username: payload.username })
+    if (!user) {
+        res.status(200).send({ username: null });
+        return;
+    }
+
+    res.status(200).send({ username: user.username });
 }

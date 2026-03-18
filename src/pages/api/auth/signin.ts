@@ -23,8 +23,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     const userJWT = jwt.sign({
         id: existingUser.id,
-        username: existingUser.email
-    }, process.env.JWT_KEY!)
+        username: existingUser.username
+    }, process.env.JWT_KEY!, { expiresIn: '7d' })
 
     setCookie(res, "hackerchat-jwt", userJWT);
     res.status(200).send({ "Result": "Sign in successful" })

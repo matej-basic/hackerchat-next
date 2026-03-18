@@ -1,9 +1,13 @@
 import { NextApiResponse } from "next";
-// @ts-ignore
 import { serialize } from "cookie";
 
-function setCookie(res: NextApiResponse, name: String, value: unknown) {
-    res.setHeader('Set-Cookie', serialize(name, value))
+function setCookie(res: NextApiResponse, name: string, value: string) {
+    res.setHeader('Set-Cookie', serialize(name, value, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+    }))
 }
 
 export default setCookie;
