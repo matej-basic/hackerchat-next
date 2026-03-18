@@ -7,7 +7,7 @@ const ab2str = (buf: ArrayBuffer | Uint8Array): string => {
     return String.fromCharCode.apply(null, Array.from(bytes));
 }
 
-const SendMessage = (props: { socket: WebSocket | null; derivedKey: CryptoKey; user: string; onCloseClick: () => void }) => {
+const SendMessage = (props: { socket: WebSocket | null; derivedKey: CryptoKey | null; user: string; onCloseClick: () => void }) => {
     const [messageText, setMessageText] = useState("");
     const [websocket, setWebSocket] = useState<WebSocket | null>(null);
 
