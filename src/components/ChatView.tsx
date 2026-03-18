@@ -15,7 +15,7 @@ const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: Crypt
     const [importedKey, setImportedKey] = useState(null) // Public key of the other client
     const [derivedKey, setDerivedKey] = useState(null) // Derived key that should be the same on both sides
     const [exportedPrivateKey, setExportedPrivateKey] = useState("") // Exported my own public key
-    const [myRsaKeyPair, setMyRsaKeyPair] = useState(null)
+    const [myRsaKeyPair, setMyRsaKeyPair] = useState<CryptoKeyPair | null>(null)
 
     var senderPublicKey;
 
