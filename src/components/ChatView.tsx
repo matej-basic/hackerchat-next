@@ -8,12 +8,12 @@ import DeriveCryptoKey from '../services/DeriveKey';
 import ImportCryptoKey from '../services/ImportKey';
 
 const ChatView = (props: { onGetSocket: (arg0: WebSocket) => void; rsaKey: CryptoKeyPair | null; socket: unknown; user: string; }) => {
-    const [websocket, setWebSocket] = useState(null);
-    const [userList, setUserList] = useState([]);
+    const [websocket, setWebSocket] = useState<WebSocket | null>(null);
+    const [userList, setUserList] = useState<string[]>([]);
     const [userChat, setUserChat] = useState("");
     const [userThatWantsToChat, setUserThatWantsToChat] = useState("");
-    const [importedKey, setImportedKey] = useState(null) // Public key of the other client
-    const [derivedKey, setDerivedKey] = useState(null) // Derived key that should be the same on both sides
+    const [importedKey, setImportedKey] = useState<CryptoKey | null>(null) // Public key of the other client
+    const [derivedKey, setDerivedKey] = useState<CryptoKey | null>(null) // Derived key that should be the same on both sides
     const [exportedPrivateKey, setExportedPrivateKey] = useState("") // Exported my own public key
     const [myRsaKeyPair, setMyRsaKeyPair] = useState<CryptoKeyPair | null>(null)
 
