@@ -14,10 +14,8 @@ const ChatBox = (props: { socket: React.SetStateAction<null>; user: string; onUs
     var returnValue: any[] = []
 
     useEffect(() => {
-        // eslint-disable-next-line
         setWebSocket(props.socket);
-        // eslint-disable-next-line
-    }, []);
+    }, [props.socket]);
 
     const str2ab = (str: string) => {
         var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
@@ -94,9 +92,9 @@ const ChatBox = (props: { socket: React.SetStateAction<null>; user: string; onUs
             // @ts-ignore
             return (message.messageAuthor === props.user) ? (
                 // @ts-ignore
-                <div className='message-row-mine'><div className='message-mine' key={message.messageId}>{message.messageText}</div></div>) : (
+                <div className='message-row-mine' key={message.messageId}><div className='message-mine'>{message.messageText}</div></div>) : (
                 // @ts-ignore
-                <div className='message-row'><div className='message' key={message.messageId}><div className='message-author'>{message.messageAuthor}</div>{message.messageText}</div></div>)
+                <div className='message-row' key={message.messageId}><div className='message'><div className='message-author'>{message.messageAuthor}</div>{message.messageText}</div></div>)
         });
     }
 

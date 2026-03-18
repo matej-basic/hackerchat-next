@@ -1,51 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import RandomID from '../services/RandomID';
 import EncryptMessage from '../services/EncryptMessage';
-import DecryptMessage from '../services/DecryptMessage';
 
-// @ts-ignore
-const SendMessage = props => {
+const ab2str = (buf: ArrayBuffer | Uint8Array): string => {
+    const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+    return String.fromCharCode.apply(null, Array.from(bytes));
+}
+
+const SendMessage = (props: { socket: WebSocket | null; derivedKey: CryptoKey; user: string; onCloseClick: () => void }) => {
     const [messageText, setMessageText] = useState("");
-    const [websocket, setWebSocket] = useState(null);
+    const [websocket, setWebSocket] = useState<WebSocket | null>(null);
 
-    const InitWebSocket = () => {
-        useEffect(() => {
-            setWebSocket(props.socket);
-        }, [])
-    };
+    useEffect(() => {
+        setWebSocket(props.socket);
+    }, [props.socket]);
 
-    InitWebSocket();
-
-    // @ts-ignore
-    const ab2str = (bufer) => {
-        // @ts-ignore
-        return String.fromCharCode.apply(null, new Uint8Array(bufer));
-    }
-
-    // @ts-ignore
-    const str2ab = (str) => {
-        var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-        var bufView = new Uint8Array(buf);
-        for (var i = 0, strLen = str.length; i < strLen; i++) {
-            bufView[i] = str.charCodeAt(i);
-        }
-        return buf;
-    }
-
-    // @ts-ignore
-    const MessageHandler = async (e) => {
+    const MessageHandler = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (messageText.length > 0) {
+        if (messageText.length > 0 && websocket) {
             const { cipherText, iv } = await EncryptMessage(messageText, props.derivedKey)
             const messageObject = { messageAuthor: props.user, messageText: ab2str(cipherText), messageID: RandomID(), messageIV: ab2str(iv) }
-            // @ts-ignore
             websocket.send(JSON.stringify(messageObject, null, 0));
             setMessageText("");
         }
-    }
-
-    const HandleClick = () => {
-        props.onCloseClick()
     }
 
     return (
@@ -53,7 +30,7 @@ const SendMessage = props => {
             <form className='message-form' onSubmit={MessageHandler} autoComplete="off">
                 <input type="text" name="message" placeholder="Your message..." className="send-message" onChange={e => setMessageText(e.target.value)} value={messageText}></input>
             </form>
-            <div onClick={e => { HandleClick() }} className='finish-chat'>CLOSE CHAT</div>
+            <div onClick={() => props.onCloseClick()} className='finish-chat'>CLOSE CHAT</div>
         </div>
     )
 }
